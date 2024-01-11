@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Genesys Cloud WebChat Demo</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        #webchat-container {
+            max-width: 100%;
+            margin: 0 auto;
+            box-sizing: border-box;
+            padding: 20px;
+        }
+         #chat-button-simple {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        #chat-button-simple {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            border: 2px solid #28a745; /* Green border color */
+            border-radius: 5px;
+            color: #28a745; /* Green text color */
+            background-color: #fff;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #chat-button-simple:hover {
+            background-color: #28a745; /* Green hover background color */
+            color: #fff; /* White text color on hover */
+        }
+        /* Add more styles as needed for your specific layout and design */
+    </style>
+</head>
+
+<body>
+
+<!--Create a Widgets configuration object-->
+<script type="text/javascript">
+
+    window._genesys = {
+      widgets: {
+        main: {
+                  theme: 'light', //'light',
+                  lang: 'en',
+                  mobileMode: true, // 'auto',
+                  mobileModeBreakpoint: 600
+        },
+        webchat: {
+          transport: {
+            type: 'purecloud-v2-sockets',
+            dataURL: 'URL',
+            deploymentKey : 'YOUR_DEPLOYMENT_KEY',
+            orgGuid : 'YOUR_ORGANIZATION_ID',
+            interactionData: {
+              routing: {
+                targetType: 'QUEUE',
+                targetAddress: 'QueueName',
+                priority: 2
+              }
+            }
+          },
+
+        }
+      }
+    };
+
+   </script>
+
+<!-- Load CXBus and the widgets-core plugin -->
+<script src="https://apps.mypurecloud.com/widgets/9.0/cxbus.min.js" onload="javascript:CXBus.configure({debug:false,pluginsPath:'https://apps.mypurecloud.com/widgets/9.0/plugins/'}); CXBus.loadPlugin('widgets-core');"></script>
+
+<!-- Optional: Use CXBus to create plugins, subscribe to events, or call commands -->
+<script type="text/javascript">
+
+    const customPlugin = CXBus.registerPlugin('Custom');
+
+    customPlugin.subscribe('WebChatService.started', function (e) {
+      console.log('Chat started', e);
+    });
+
+    customPlugin.subscribe('WebChatService.ended', function (e) {
+      console.log('Chat ended', e);
+    });
+    function open() {
+        customPlugin.command('WebChat.open');
+    }
+    window.onload = open;
+  </script>
+
+<script type="text/javascript">
+		function getAdvancedConfig() {
+			return {
+				form: {
+					autoSubmit: false,
+					firstname: 'Praenomen',
+					lastname: 'Gens',
+					email: 'praenomen.gens@calidumlitterae.com',
+					subject: 'Populated from data'
+				},
+				formJSON: {
+					wrapper: '<table></table>',
+					inputs: [
+						// Default fields
+						{
+							id: 'cx_webchat_form_firstname',
+							name: 'firstname',
+							maxlength: '100',
+							placeholder: 'Required',
+							label: 'First Name'
+						},
+						{
+							id: 'cx_webchat_form_lastname',
+							name: 'lastname',
+							maxlength: '100',
+							placeholder: 'Required',
+							label: 'Last Name'
+						},
+						{
+							id: 'cx_webchat_form_email',
+							name: 'email',
+							maxlength: '100',
+							placeholder: 'Optional',
+							label: 'Email'
+						},
+						{
+							id: 'cx_webchat_form_subject',
+							name: 'subject',
+							maxlength: '100',
+							placeholder: 'Optional',
+							label: 'Subject'
+						},
+						// Custom Fields
+						{
+							id: 'custom_field_1',
+							name: 'customField1',
+							maxlength: '100',
+							placeholder: 'Custom Data',
+							label: 'Custom Field 1',
+							value: 'My Custom Value'
+						}
+					]
+				}
+			};
+		}
+	</script>
+</body>
+</html>
